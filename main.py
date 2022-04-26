@@ -38,9 +38,9 @@ def fast_MED(S, T, mem={}):
   
     return mem[-1][-1]
 
-    
 def fast_align_MED(S, T, MED={}):
     mem = [[0 for x in range(len(S))] for x in range(len(T))]
+    align_path = list()
   
     for i in range(len(T)):
         for j in range(len(S)):
@@ -51,15 +51,9 @@ def fast_align_MED(S, T, MED={}):
             else: mem[i][j] = 1 + min(mem[i][j-1], 
                                       mem[i-1][j-1],
                                       mem[i-1][j])
-
-    print2dlist(mem) 
-    print()
-    
-    align_path = list()
-  
+      
     i, j = len(T) - 1, len(S) - 1
     align_path.append((i, j))
-
     while i != 0 and j != 0:
       min_ = min(mem[i][j-1], mem[i-1][j-1], mem[i-1][j])
       
@@ -79,30 +73,40 @@ def fast_align_MED(S, T, MED={}):
         i -= 1
         align_path.append((i, j))
 
-    align_path = list(reversed(align_path))
+    align_S, align_T = str(), str()
+    i, j = len(T) - 1, len(S) - 1
+    for idx, (t, s) in enumerate(align_path):
 
+      if i == t: 
+        align_T += T[i]
+        i -= 1
+      else:
+        align_T += '-'
+        i = t - 1
+      
+      if j == s: 
+        align_S += S[j]
+        j -= 1
+      else:
+        align_S += '-'
+        j = s - 1
+
+    print2dlist(mem) 
+    print()
     print(align_path)
     print()
-
-    align_S, align_T = str(), str()
-
-    # itterate over path align
-    # cells that follow diagonal path add char for both words
-    # for cells that diviate from diagonal path, add '-' for deviateing word
-    
+    print(align_T[::-1])
+    print(align_S[::-1])
+    print()
   
-    return align_S, align_T
+    return align_S[::-1], align_T[::-1]
 
 def test_MED():
     for S, T in test_cases:
-      #assert fast_MED(S, T) == MED(S, T)
-      pass
-      
-                                 
+      assert fast_MED(S, T) == MED(S, T)
+                       
 def test_align():
     for i in range(len(test_cases)):
         S, T = test_cases[i]
         align_S, align_T = fast_align_MED(S, T)
-        #assert (align_S == alignments[i][0] and align_T == alignments[i][1])
-
-test_align()
+        assert (align_S == alignments[i][0] and align_T == alignments[i][1])
