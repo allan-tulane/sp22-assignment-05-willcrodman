@@ -24,8 +24,6 @@ as few coins as possible that sum to $N$. Please discuss if this algorithm is op
 
 **enter answer in `answers.md`**
 
-
-
 **1b)** What is the work and span of your algorithm?
 
 **enter answer in `answers.md`**
