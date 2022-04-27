@@ -1,6 +1,8 @@
 
 ####### Problem 3 #######
 
+import math
+
 test_cases = [('book', 'back'), ('kookaburra', 'kookybird'), ('elephant', 'relevant'), ('AAAGAATTCA', 'AAATCA')]
 alignments = [('book', 'back'), ('kookaburra', 'kookybird-'), ('relev-ant','-elephant'), ('AAAGAATTCA', 'AAA---T-CA')]
 
@@ -18,8 +20,8 @@ def MED(S, T):
                            MED(S[1:], T))     # deletion 
 
 def print2dlist(list_): 
-  for i in list(reversed(list_)):
-    for j in i:
+  for i in list_:
+    for j in list(reversed(i)):
         print(f" {j} ", end="")
     print("")
 
@@ -51,54 +53,56 @@ def fast_align_MED(S, T, MED={}):
             else: mem[i][j] = 1 + min(mem[i][j-1], 
                                       mem[i-1][j-1],
                                       mem[i-1][j])
-      
+
+    # find alignment path 
     i, j = len(T) - 1, len(S) - 1
     align_path.append((i, j))
     while i != 0 and j != 0:
-      min_ = min(mem[i][j-1], mem[i-1][j-1], mem[i-1][j])
-      
-      #decreasing case (diagonal to current cell)
+      min_ = min(mem[i-1][j-1], mem[i][j-1], mem[i-1][j])
+
+      # diagonal decreasing case
       if mem[i-1][j-1] == min_:
         i -= 1
         j -= 1
         align_path.append((i, j))
 
-      # non-decreasing (horizontal to current cell)
+      # horizontal non-decreasing
       elif mem[i][j-1] == min_:
         j -= 1
         align_path.append((i, j))
 
-      # non-decreasing (vertical to current cell)
-      else:
+      # vetical decreasing
+      elif mem[i-1][j] == min_:
         i -= 1
         align_path.append((i, j))
 
-    align_S, align_T = str(), str()
+    # finding traceback for string edits
+    # note : t char index = i , then s char index = j 
+    align_S, align_T = str(), str()  
     i, j = len(T) - 1, len(S) - 1
-    for idx, (t, s) in enumerate(align_path):
-
-      if i == t: 
-        align_T += T[i]
-        i -= 1
-      else:
-        align_T += '-'
-        i = t - 1
+    for t, s in align_path:
       
-      if j == s: 
-        align_S += S[j]
+      # diagonal increase case
+      if t == i and s == j:
+        align_T += T[t]
+        align_S += S[s]
+        i -= 1
         j -= 1
-      else:
-        align_S += '-'
-        j = s - 1
 
-    print2dlist(mem) 
-    print()
-    print(align_path)
-    print()
-    print(align_T[::-1])
-    print(align_S[::-1])
-    print()
-  
+      # horizontal non-increase
+      if t == i and s > j:
+        align_T += T[t]
+        align_S += '-'
+        i -= 1
+        j = s - 1
+        
+      # vetical increasing
+      if t > i and s == j:
+        align_T += '-'
+        align_S += S[s]
+        i = t - 1
+        j -= 1
+
     return align_S[::-1], align_T[::-1]
 
 def test_MED():
@@ -110,3 +114,4 @@ def test_align():
         S, T = test_cases[i]
         align_S, align_T = fast_align_MED(S, T)
         assert (align_S == alignments[i][0] and align_T == alignments[i][1])
+  

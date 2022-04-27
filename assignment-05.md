@@ -46,15 +46,12 @@ possible?
   
 **enter answer in `answers.md`**
 
-
-
 **2b)** Use this optimal substructure property to design a
   dynamic programming algorithm for this problem. If you used top-down
   or bottom-up memoization to avoid recomputing solutions to
   subproblems, what is the work and span of your approach?
 
 **enter answer in `answers.md`**
-
 
 ## Part 3: Edit Distance
 
